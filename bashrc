@@ -27,7 +27,7 @@ shopt -s checkwinsize
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -37,7 +37,6 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
@@ -125,9 +124,7 @@ cal;date;echo;
 # Reminders
 echo "Reminders:"
 echo
-
-shopt -s globstar
-# shopt -s nullglob
+cat ~/reminders
 
 #}
 
@@ -139,15 +136,8 @@ alias rm="rm -vi"
 alias mv="mv -vi"
 alias cp="cp -vi"
 
-# ssh to ec2
-alias sshec2="ssh -i ~/.ssh/aws.pem ec2-user@ec2-13-59-255-126.us-east-2.compute.amazonaws.com"
-
 # Makes ls look nicer
 alias ls='ls -Fh --color=always --group-directories-first'
-
-# common aliases
-alias ll='ls -l'
-alias la='ls -a'
 
 # quick move up one pnrt
 alias up="cl .."
@@ -159,13 +149,10 @@ alias more="more -dlsup"
 # I use vim too much
 alias :q="echo \"This is bash, not vim!\""
 
-# script to concatenate pdfs. currently broken
-#alias staple="~/Documents/projects/staple/staple.py"
-
 alias vrc='vim ~/.vimrc'
 alias brc='vim ~/.bashrc'
-alias pfp='cl ~/Documents/University/2018/fyp'
 
+# aliases for connecting to p drive
 alias mdrp="sudo mount -t davfs https://files.engineering.auckland.ac.nz/pdrive/MECH/asou651-rtan781 pdrive -o uid=antony,gid=antony"
 alias mdrs="sudo mount -t davfs https://files.engineering.auckland.ac.nz/sdrive sdrive -o uid=antony,gid=antony"
 alias mdrh="sudo mount -t davfs https://files.engineering.auckland.ac.nz/hdrive/asou651 hdrive -o uid=antony,gid=antony"
@@ -192,9 +179,8 @@ parse_git_branch () {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/git:\1 /'
 }
 
-PS0='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
-
-PS1=${PS0%?}' $(parse_git_branch)\n$ '
+pre_ps1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
+export PS1=${pre_ps1%?}' $(parse_git_branch)\n$ '
 
 # Does ls immediately after cd
 # 'cl' short for "Change (directory) then List contents"
@@ -280,9 +266,6 @@ uni () {
 }
 
 #}
-
-export PATH=/usr/local/texlive/2017/bin/x86_64-linux/:~/ctags/build/bin/:$PATH
-export PARINIT='rTbgqr B=.,?_A_a Q=_s>|'
 
 # run something in background with output piped to null
 # TODO: make name show up properly

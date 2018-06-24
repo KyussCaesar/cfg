@@ -27,7 +27,7 @@ shopt -s checkwinsize
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -37,7 +37,6 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
@@ -125,15 +124,7 @@ cal;date;echo;
 # Reminders
 echo "Reminders:"
 echo
-echo "Don't forget: you made /usr/bin/python point to python3.6."
-echo "If anything breaks, check if this is the reason".
-echo
-echo "If davfs2 keeps playing up, try fusedav instead. Also, remember"
-echo "that you changed the setting 'if_match_bug 1'"
-echo
-
-shopt -s globstar
-# shopt -s nullglob
+cat ~/reminders
 
 #}
 
@@ -146,15 +137,8 @@ alias rm="rm -vi"
 alias mv="mv -vi"
 alias cp="cp -vi"
 
-# ssh to ec2
-alias sshec2="ssh -i ~/.ssh/aws.pem ec2-user@ec2-13-59-255-126.us-east-2.compute.amazonaws.com"
-
 # Makes ls look nicer
 alias ls='ls -Fh --color=always --group-directories-first'
-
-# common aliases
-alias ll='ls -l'
-alias la='ls -a'
 
 # quick move up one pnrt
 alias up="cl .."
@@ -166,13 +150,10 @@ alias more="more -dlsup"
 # I use vim too much
 alias :q="echo \"This is bash, not vim!\""
 
-# script to concatenate pdfs. currently broken
-#alias staple="~/Documents/projects/staple/staple.py"
-
 alias vrc='vim ~/.vimrc'
 alias brc='vim ~/.bashrc'
-alias pfp='cl ~/Documents/University/2018/fyp'
 
+# aliases for connecting to p drive
 alias mdrp="sudo mount -t davfs https://files.engineering.auckland.ac.nz/pdrive/MECH/asou651-rtan781 pdrive -o uid=antony,gid=antony"
 alias mdrs="sudo mount -t davfs https://files.engineering.auckland.ac.nz/sdrive sdrive -o uid=antony,gid=antony"
 alias mdrh="sudo mount -t davfs https://files.engineering.auckland.ac.nz/hdrive/asou651 hdrive -o uid=antony,gid=antony"
@@ -189,13 +170,6 @@ alias xflux='/opt/xflux/start_xflux.sh'
 # git
 alias gads="git add \"*\"; git status"
 
-# python
-alias python="python3.6"
-alias python3="python3.6"
-
-# matlab
-alias matlab="matlab -nodesktop -nodisplay -nosplash"
-
 #}
 
 ## SHELL FUNCTIONS
@@ -206,9 +180,8 @@ parse_git_branch () {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/git:\1 /'
 }
 
-PS0='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
-
-PS1=${PS0%?}' $(parse_git_branch)\n$ '
+pre_ps1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
+export PS1=${pre_ps1%?}' $(parse_git_branch)\n$ '
 
 # Does ls immediately after cd
 # 'cl' short for "Change (directory) then List contents"
@@ -247,45 +220,6 @@ mkproj () {
 	ls
 }
 
-# Adjusts the brightness of the screen (requires sudo privelige)
-brightness () {
-	max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
-	if [ $# -eq 0 ]; then
-# PRINT USAGE INFO
-		echo "Usage: brightness [ setting ]"
-		echo "Where setting is one of: min, low, med, high, max, current, set [0..1]"
-		echo "If an invalid option is passed, brightness will be set to max."
-		echo "Probably don't set value outside of 0-1, I don't know what will happen."
-		return 1
-	fi
-	if [ $1 == "current" ]; then
-		PERCENT=`cat /sys/class/backlight/intel_backlight/actual_brightness`/$max
-		echo $PERCENT
-		return 0
-	fi
-	brightnessset=$max
-	if [ $1 == "set" ]; then
-		brightnessset=$(echo "($2 * $max)/1" | bc)
-	fi
-	if [ $1 == "min" ]; then
-		brightnessset=$(echo "(0.01 * $max)/1" | bc)
-	fi
-	if [ $1 == "low" ]; then
-		brightnessset=$(echo "(0.05 * $max)/1" | bc)
-	fi
-	if [ $1 == "med" ]; then
-		brightnessset=$(echo "(0.15 * $max)/1" | bc)
-	fi
-	if [ $1 == "high" ]; then
-		brightnessset=$(echo "(0.4 * $max)/1" | bc)
-	fi
-	if [ $1 == "max" ]; then
-		brightnessset=$max
-	fi
-	echo $brightnessset | sudo tee /sys/class/backlight/intel_backlight/brightness
-	return 0
-}
-
 # open vim help
 velp () {
     vim -c "help $1 | only"
@@ -293,8 +227,6 @@ velp () {
 
 # Use vim as man pager (this way, you can use tags to navigate to related topics.)
 export MANPAGER="env MAN_PN=1 vim -M +MANPAGER -c \"set colorcolumn=0 | set foldcolumn=0\" -"
-
-alias 'init-report'='cp -r ~/.latex-resources/project/* .'
 
 #}
 
@@ -335,11 +267,6 @@ uni () {
 }
 
 #}
-
-export PATH=/usr/local/texlive/2017/bin/x86_64-linux/:~/ctags/build/bin/:$PATH
-export PARINIT='rTbgqr B=.,?_A_a Q=_s>|'
-
-export ec2=ec2-13-59-255-126.us-east-2.compute.amazonaws.com
 
 # run something in background with output piped to null
 # TODO: make name show up properly

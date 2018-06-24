@@ -272,3 +272,6 @@ uni () {
 quietly () {
     $@ &> /dev/null &
 }
+
+source ~/.bash
+

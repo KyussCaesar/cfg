@@ -125,12 +125,6 @@ cal;date;echo;
 # Reminders
 echo "Reminders:"
 echo
-echo "Don't forget: you made /usr/bin/python point to python3.6."
-echo "If anything breaks, check if this is the reason".
-echo
-echo "If davfs2 keeps playing up, try fusedav instead. Also, remember"
-echo "that you changed the setting 'if_match_bug 1'"
-echo
 
 shopt -s globstar
 # shopt -s nullglob
@@ -139,7 +133,6 @@ shopt -s globstar
 
 ## ALIASES
 #{
-alias vim='/usr/local/bin/vim' # I've got Vim7 from ubuntu repos but also Vim8 from internet; this points 'vim' to vim8
 
 # prompt on overwrite
 alias rm="rm -vi"
@@ -188,13 +181,6 @@ alias xflux='/opt/xflux/start_xflux.sh'
 
 # git
 alias gads="git add \"*\"; git status"
-
-# python
-alias python="python3.6"
-alias python3="python3.6"
-
-# matlab
-alias matlab="matlab -nodesktop -nodisplay -nosplash"
 
 #}
 
@@ -247,45 +233,6 @@ mkproj () {
 	ls
 }
 
-# Adjusts the brightness of the screen (requires sudo privelige)
-brightness () {
-	max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
-	if [ $# -eq 0 ]; then
-# PRINT USAGE INFO
-		echo "Usage: brightness [ setting ]"
-		echo "Where setting is one of: min, low, med, high, max, current, set [0..1]"
-		echo "If an invalid option is passed, brightness will be set to max."
-		echo "Probably don't set value outside of 0-1, I don't know what will happen."
-		return 1
-	fi
-	if [ $1 == "current" ]; then
-		PERCENT=`cat /sys/class/backlight/intel_backlight/actual_brightness`/$max
-		echo $PERCENT
-		return 0
-	fi
-	brightnessset=$max
-	if [ $1 == "set" ]; then
-		brightnessset=$(echo "($2 * $max)/1" | bc)
-	fi
-	if [ $1 == "min" ]; then
-		brightnessset=$(echo "(0.01 * $max)/1" | bc)
-	fi
-	if [ $1 == "low" ]; then
-		brightnessset=$(echo "(0.05 * $max)/1" | bc)
-	fi
-	if [ $1 == "med" ]; then
-		brightnessset=$(echo "(0.15 * $max)/1" | bc)
-	fi
-	if [ $1 == "high" ]; then
-		brightnessset=$(echo "(0.4 * $max)/1" | bc)
-	fi
-	if [ $1 == "max" ]; then
-		brightnessset=$max
-	fi
-	echo $brightnessset | sudo tee /sys/class/backlight/intel_backlight/brightness
-	return 0
-}
-
 # open vim help
 velp () {
     vim -c "help $1 | only"
@@ -293,8 +240,6 @@ velp () {
 
 # Use vim as man pager (this way, you can use tags to navigate to related topics.)
 export MANPAGER="env MAN_PN=1 vim -M +MANPAGER -c \"set colorcolumn=0 | set foldcolumn=0\" -"
-
-alias 'init-report'='cp -r ~/.latex-resources/project/* .'
 
 #}
 
@@ -338,8 +283,6 @@ uni () {
 
 export PATH=/usr/local/texlive/2017/bin/x86_64-linux/:~/ctags/build/bin/:$PATH
 export PARINIT='rTbgqr B=.,?_A_a Q=_s>|'
-
-export ec2=ec2-13-59-255-126.us-east-2.compute.amazonaws.com
 
 # run something in background with output piped to null
 # TODO: make name show up properly

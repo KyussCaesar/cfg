@@ -53,18 +53,6 @@ alias :q="echo \"This is bash, not vim!\""
 alias vrc='vim ~/.vimrc'
 alias brc='vim ~/.bashrc'
 
-# aliases for connecting to uni drives
-alias mdrp="sudo mount -t davfs https://files.engineering.auckland.ac.nz/pdrive pdrive -o uid=antony,gid=antony"
-alias mdrs="sudo mount -t davfs https://files.engineering.auckland.ac.nz/sdrive sdrive -o uid=antony,gid=antony"
-alias mdrh="sudo mount -t davfs https://files.engineering.auckland.ac.nz/hdrive/asou651 hdrive -o uid=antony,gid=antony"
-alias mdra="mdrp; mdrs; mdrh;"
-
-# aliases for unmounting uni drives
-alias ump="sudo umount pdrive"
-alias ums="sudo umount sdrive"
-alias umh="sudo umount hdrive"
-alias uma="sudo umount pdrive; sudo umount hdrive; sudo umount sdrive;"
-
 # quickly add everything that's changed
 alias gads="git add \"*\"; git status"
 

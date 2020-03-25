@@ -36,6 +36,7 @@ __pycache__/*
 ############
 *.sw[a-p]
 tags
+*.vimsession
 
 # Packages #
 ############
@@ -53,8 +54,13 @@ tags
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
+
+# Data files #
+##############
+*.csv
+*.feather
+*.[rR][dD][sS]
 
 # OS generated files #
 ######################

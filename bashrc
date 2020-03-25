@@ -5,6 +5,9 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# If bashrc already run for this shell, don't do it again
+# [[ -z "$BASHRC_SET" ]] && return
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -37,14 +40,19 @@ alias ls='ls -Fh --color=auto --group-directories-first'
 alias ll='ls -l'
 alias la='ls -A'
 
-alias dir='dir --color=auto'
-alias vdir='vdir --color=auto'
-
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias more="more -dlsup"
+
+# do you know how many times I've used GhostScript? Literally never.
+# do you know how many times I've wanted to count graph components? Literally never.
+alias gs="git status"
+alias gc="git commit"
+alias ga="git add"
+alias gauc="git add -u && git commit"
+alias gaucp="git add -u && git commit && git push"
 
 # I use vim too much
 alias :q="echo \"This is bash, not vim!\""
@@ -69,8 +77,34 @@ parse_git_branch () {
 pre_ps1='\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\W\[\033[00m\] '
 export PS1=${pre_ps1%?}' $(parse_git_branch)\n$ '
 
-# original Arch prompt
-#PS1='[\u@\h \W]\$ '
+# open vim help
+velp () {
+    vim -c "help $1 | only"
+}
+
+# run something in background with output piped to null
+# TODO: make name show up properly
+quietly () {
+    $@ &> /dev/null &
+}
+
+# vim keybindings
+set -o vi
+
+## Show calendar on login
+cal;date;echo;
+
+# Reminders
+if [ -f ~/reminders ]; then
+    echo "Reminders:"
+    echo
+    cat ~/reminders
+fi
+
+# Place any machine-specific commands in here.
+if [ -f ~/.bash ]; then
+    source ~/.bash
+fi
 
 # Does ls immediately after cd
 # 'cl' short for "Change (directory) then List contents"
@@ -87,29 +121,14 @@ mkcl () {
 	cl "$*"
 }
 
-# open vim help
-velp () {
-    vim -c "help $1 | only"
-}
+export EDITOR=vim
 
-# run something in background with output piped to null
-# TODO: make name show up properly
-quietly () {
-    $@ &> /dev/null &
-}
+# set so that bashrc is loaded only once
+export BASHRC_SET=1
 
-## Show calendar on login
-cal;date;echo;
+alias disk-usage="du -sh -- * | sort -h"
 
-# Reminders
-if [ -f ~/reminders ]; then
-    echo "Reminders:"
-    echo
-    cat ~/reminders
-fi
+# expose scripts in current and subdirectories
+export PATH=$PATH:.:./bin:./script
 
-# Place any machine-specific commands in here.
-if [ -f ~/.bash ]; then
-    source ~/.bash
-fi
 

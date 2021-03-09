@@ -51,8 +51,13 @@ alias more="more -dlsup"
 alias gs="git status"
 alias gc="git commit"
 alias ga="git add"
+alias gau="git add -u"
 alias gauc="git add -u && git commit"
 alias gaucp="git add -u && git commit && git push"
+
+alias gco="git checkout"
+alias gp="git pull"
+alias gm="git merge"
 
 # I use vim too much
 alias :q="echo \"This is bash, not vim!\""
@@ -92,7 +97,7 @@ quietly () {
 set -o vi
 
 ## Show calendar on login
-cal;date;echo;
+#cal;date;echo;
 
 # Reminders
 if [ -f ~/reminders ]; then
@@ -131,4 +136,8 @@ alias disk-usage="du -sh -- * | sort -h"
 # expose scripts in current and subdirectories
 export PATH=$PATH:.:./bin:./script
 
+debian () {
+  docker run -it debian:buster "$@"
+}
 
+export PATH="$PATH:/Users/antonysouthworth/.local/bin"
